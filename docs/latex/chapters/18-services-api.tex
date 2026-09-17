@@ -1,9 +1,0 @@
-\chapter{Services and API Boundaries}
-\section{Current API Boundary}
-The directory \code{src/lib/api} contains mock-backed service/API boundaries for students, guardians, academic structure, attendance, communication, staff, staff attendance, leave, documents, employment, accounts, performance, academic assignments, workload, promotions, placements, and attachments.
-
-\section{Mutation Boundary}
-Mutations are usually performed through server actions under feature \code{actions} directories. Actions check permissions, build trusted tenant scope, call services, and revalidate routes.
-
-\section{Real Backend Status}
-\notimplemented{} No real HTTP backend, NestJS API, Prisma repository, or PostgreSQL implementation exists in the inspected source.
