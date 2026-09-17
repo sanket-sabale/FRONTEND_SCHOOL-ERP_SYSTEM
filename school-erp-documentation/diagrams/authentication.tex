@@ -1,0 +1,14 @@
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[node distance=9mm, box/.style={draw,rounded corners,align=center,minimum width=32mm,minimum height=9mm,fill=SurfaceMuted}]
+\node[box] (login) {Login UI};
+\node[box,right=of login] (session) {Current User};
+\node[box,right=of session] (role) {Role};
+\node[box,right=of role] (perm) {Permissions};
+\draw[-{Latex},thick] (login) -- (session);
+\draw[-{Latex},thick] (session) -- (role);
+\draw[-{Latex},thick] (role) -- (perm);
+\end{tikzpicture}
+\caption{Current authentication surface is mock/session-oriented; production JWT flows are planned.}
+\label{fig:authentication}
+\end{figure}

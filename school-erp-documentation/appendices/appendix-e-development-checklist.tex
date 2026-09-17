@@ -1,0 +1,32 @@
+\chapter{Development Checklist}
+\label{app:checklist}
+\section{Before Implementation}
+\begin{itemize}
+\item Inspect current source and related feature modules.
+\item Identify existing services, schemas, actions, and UI primitives.
+\item Confirm permission and tenant-scope requirements.
+\item Avoid duplicate domain architecture.
+\end{itemize}
+
+\section{During Implementation}
+\begin{itemize}
+\item Keep business rules in services/rules.
+\item Use Zod/runtime validation for external input.
+\item Preserve existing routes and behavior unless explicitly changing them.
+\item Use existing design system and responsive conventions.
+\end{itemize}
+
+\section{Validation}
+\begin{lstlisting}[language=bash]
+.\node_modules\.bin\tsc.cmd --noEmit
+.\node_modules\.bin\eslint.cmd src --ext .ts,.tsx
+.\node_modules\.bin\next.cmd build
+git diff --check
+\end{lstlisting}
+
+\section{Documentation}
+\begin{itemize}
+\item Update module status matrices.
+\item Mark future functionality as future, not implemented.
+\item Record known limitations honestly.
+\end{itemize}

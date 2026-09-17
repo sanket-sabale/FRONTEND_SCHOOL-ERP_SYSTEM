@@ -1,0 +1,12 @@
+\chapter{UI/UX Design}
+\section{Design Philosophy}
+The UI is modern, professional, minimal, enterprise-oriented, and optimized for operational workflows. Data-heavy screens favor dense but readable cards, tables, status badges, and clear action rows.
+
+\section{Design Tokens}
+Current CSS tokens include \texttt{--background}, \texttt{--foreground}, \texttt{--surface}, \texttt{--surface-muted}, \texttt{--border}, \texttt{--primary}, \texttt{--success}, \texttt{--warning}, \texttt{--danger}, and \texttt{--info}. Light and dark themes are implemented through CSS variables.
+
+\section{Responsive System}
+The shell uses mobile-first layout, a sticky top header, mobile drawer, desktop sidebar from \texttt{lg}, and \texttt{erp-container} with max width \texttt{1280px}. Responsive utilities prevent horizontal overflow.
+
+\section{Accessibility}
+The project uses semantic buttons, native form controls, focus-visible outlines, readable status text, role-based dialogs in the shell, and non-color-only status labels. Some controls may remain below ideal 44px touch target size and should be reviewed case by case.

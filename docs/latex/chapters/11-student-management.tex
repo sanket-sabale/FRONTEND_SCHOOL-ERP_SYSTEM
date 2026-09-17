@@ -1,0 +1,15 @@
+\chapter{Student Management}
+\section{Status}
+\implemented{} with mock-backed services.
+
+\section{Routes}
+Implemented student routes are \code{/students}, \code{/students/new}, \code{/students/[studentId]}, \code{/students/[studentId]/edit}, and \code{/students/[studentId]/placement}.
+
+\section{Feature Files}
+Student files exist under \code{src/features/students}. They include domain types, Zod schemas, mock data, lifecycle/document services, hooks, create/edit/lifecycle/document actions, directory/profile/forms/status badge/document panel components.
+
+\section{Capabilities}
+Student Management supports directory, create, edit, profile, lifecycle controls, documents, status badges, tenant-scoped access, and academic placement integration.
+
+\section{Permissions}
+Reads use \code{student.view}; mutations use \code{student.create}, \code{student.update}, \code{student.archive}, or \code{student.manage} depending on operation.

@@ -1,0 +1,24 @@
+\chapter{Domain Models}
+\section{Important Models}
+\begin{longtable}{@{}p{0.28\textwidth}p{0.24\textwidth}p{0.38\textwidth}@{}}
+\toprule
+\textbf{Model} & \textbf{Source} & \textbf{Purpose}\\
+\midrule
+Student & \code{features/students/types} & Student identity and school record.\\
+Guardian & \code{features/guardians/types} & Parent/guardian records.\\
+AcademicYear/Class/Section & \code{features/academic-structure/types} & Academic structure.\\
+Attendance & \code{features/attendance/types} & Student attendance and related reports/repair/audit/export models.\\
+Staff & \code{features/staff/types} & Personnel identity, employment, lifecycle, contact.\\
+StaffAttendance & \code{features/staff-attendance/types} & Staff attendance records.\\
+StaffLeave & \code{features/staff-leave/types} & Leave requests and balances.\\
+StaffDocument & \code{features/staff-documents/types} & HR document metadata and verification.\\
+StaffEmploymentRecord & \code{features/staff-employment/types} & Employment record/timeline data.\\
+StaffAccount & \code{features/staff-accounts/types} & Staff-user relationship and access summary.\\
+StaffPerformance & \code{features/staff-performance/types} & Reviews, goals, training, performance cycles.\\
+StaffAcademicAssignment & \code{features/staff-academic-assignments/types} & Staff academic responsibility.\\
+StaffWorkload & \code{features/staff-workload/types} & Workload, availability, conflicts, readiness.\\
+\bottomrule
+\end{longtable}
+
+\section{Tenant Ownership}
+Many models extend or use \code{TenantScopedQuery}: \code{tenantId}, \code{schoolId}, \code{campusId}, and \code{academicYearId}.

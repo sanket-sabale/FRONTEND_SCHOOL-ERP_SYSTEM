@@ -1,0 +1,13 @@
+\chapter{Multi-Tenancy}
+\section{Actual Tenant Context}
+The actual mock context lives at \code{src/lib/tenant-context.ts}. It includes \code{tenantId}, \code{schoolId}, \code{campusId}, \code{academicYearId}, group, school, campus, and academic-year display labels.
+
+\section{Tenant-Scoped Services}
+Services typically accept \code{TenantScopedQuery}. Staff, academic assignments, workload, attendance, student placements, documents, and promotion services use scope to filter mock records.
+
+\begin{securitybox}
+Client-provided tenant identifiers must not be treated as authorization authority. In production, tenant context must come from authenticated server/request context.
+\end{securitybox}
+
+\section{Production Requirement}
+\future{} database-backed tenant isolation would require tenant columns, scoped repository filters, unique constraints, indexes, and tests for cross-tenant access.

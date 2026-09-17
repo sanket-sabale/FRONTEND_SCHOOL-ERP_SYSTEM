@@ -1,0 +1,17 @@
+\chapter{Project Structure}
+\section{Top-Level Source}
+\begin{lstlisting}
+src/
+  app/          Next.js route tree
+  components/   shared app shell, navigation, UI primitives
+  config/       navigation and role permission configuration
+  features/     domain feature modules
+  lib/          tenant context, current user, API/service boundaries
+  types/        shared ERP types
+\end{lstlisting}
+
+\section{Feature Pattern}
+Feature modules generally use \code{types}, \code{schemas}, \code{services}, \code{actions}, and \code{components}. Some older or smaller features only implement the files needed by that module.
+
+\section{Documentation Location}
+This documentation project is isolated at \code{docs/latex} and does not modify application source code.

@@ -1,0 +1,19 @@
+\chapter{Security Considerations}
+\section{Implemented}
+\begin{itemize}
+\item Role/permission checks in routes and server actions.
+\item Tenant scope passed to services.
+\item Validation schemas and service rules.
+\item Friendly unavailable/unauthorized states.
+\item Mock document/file abstractions without public cloud URLs.
+\end{itemize}
+
+\section{Production Hardening Required}
+\begin{itemize}
+\item Real authentication and session security.
+\item Server-side tenant resolver.
+\item Database-level tenant constraints and indexes.
+\item Audit log persistence.
+\item File storage access control.
+\item Automated security tests.
+\end{itemize}

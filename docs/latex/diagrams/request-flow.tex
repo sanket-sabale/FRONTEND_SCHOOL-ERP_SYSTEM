@@ -1,0 +1,18 @@
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[node distance=9mm, box/.style={draw,rounded corners,align=center,minimum width=34mm,minimum height=9mm,fill=SurfaceMuted}]
+\node[box] (route) {Route/Page};
+\node[box,right=of route] (perm) {\code{hasPermission}};
+\node[box,right=of perm] (tenant) {\code{tenantContext}};
+\node[box,below=of tenant] (service) {Service};
+\node[box,left=of service] (rules) {Schema/Rules};
+\node[box,left=of rules] (data) {Mock Data};
+\draw[-{Latex},thick] (route) -- (perm);
+\draw[-{Latex},thick] (perm) -- (tenant);
+\draw[-{Latex},thick] (tenant) -- (service);
+\draw[-{Latex},thick] (service) -- (rules);
+\draw[-{Latex},thick] (rules) -- (data);
+\end{tikzpicture}
+\caption{Permission and tenant-scoped service flow.}
+\label{fig:request-flow}
+\end{figure}

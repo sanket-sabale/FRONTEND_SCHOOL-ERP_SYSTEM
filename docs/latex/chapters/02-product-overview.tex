@@ -1,0 +1,20 @@
+\chapter{Product Overview}
+\section{Business Areas}
+Implemented or partially implemented business areas include Students, Guardians, Academics, Attendance, Communication, Promotions, Staff Management, HR Operations, Performance, Staff Documents, Staff Accounts, Academic Assignments, and Staff Workload.
+
+\section{Current Tenant Example}
+The mock tenant context represents \code{VidyaSetu Education Group}, \code{Saraswati Public School}, \code{Pune Wakad Campus}, academic year \code{2026-27}.
+
+\section{Implementation Boundaries}
+\begin{longtable}{@{}p{0.30\textwidth}p{0.22\textwidth}p{0.38\textwidth}@{}}
+\toprule
+\textbf{Area} & \textbf{Status} & \textbf{Notes}\\
+\midrule
+Frontend ERP Shell & \implemented & AppShell, sidebar, topbar, command palette.\\
+Feature Workspaces & \implemented & Multiple route families under \code{src/app}.\\
+Persistence & \mockonly & Deterministic mock and in-memory services.\\
+Production Backend & \notimplemented & No NestJS/Prisma/PostgreSQL implementation in source.\\
+Payroll & \notimplemented & Navigation placeholder only via \code{/\#payroll}.\\
+Full Timetable & \notimplemented & Workload readiness exists; timetable generation does not.\\
+\bottomrule
+\end{longtable}

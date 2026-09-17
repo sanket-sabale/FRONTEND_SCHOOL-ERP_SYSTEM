@@ -1,0 +1,18 @@
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[node distance=10mm, box/.style={draw,rounded corners,align=center,minimum width=28mm,minimum height=9mm,fill=SurfaceMuted}]
+\node[box] (browser) {Browser};
+\node[box,right=of browser] (route) {Route};
+\node[box,right=of route] (perm) {Permission};
+\node[box,right=of perm] (tenant) {Tenant Context};
+\node[box,below=of tenant] (service) {Service};
+\node[box,left=of service] (data) {Data Boundary};
+\draw[-{Latex},thick] (browser) -- (route);
+\draw[-{Latex},thick] (route) -- (perm);
+\draw[-{Latex},thick] (perm) -- (tenant);
+\draw[-{Latex},thick] (tenant) -- (service);
+\draw[-{Latex},thick] (service) -- (data);
+\end{tikzpicture}
+\caption{Tenant-aware request flow used throughout implemented routes and actions.}
+\label{fig:request-flow}
+\end{figure}

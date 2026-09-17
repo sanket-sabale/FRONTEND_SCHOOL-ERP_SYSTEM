@@ -1,0 +1,12 @@
+\chapter{Authentication and Authorization}
+\section{Current Authentication Status}
+The current project uses a mock current user and role through \texttt{src/lib/current-user.ts}. Production JWT, refresh token, password reset, logout, and session storage flows are planned but not implemented.
+
+\input{diagrams/authentication}
+\input{diagrams/authorization}
+
+\section{Roles}
+Implemented role keys are \texttt{principal}, \texttt{teacher}, \texttt{accountant}, \texttt{hr}, and \texttt{system-admin}.
+
+\section{Permission Matrix}
+The full permission matrix is summarized in \cref{app:permissions}. Mutations in Staff Management generally require \texttt{hr.manage}; reads require \texttt{hr.view}. Attendance marking requires \texttt{attendance.mark}. Communication send actions require \texttt{communication.send}.

@@ -1,0 +1,30 @@
+\chapter{Frontend Architecture}
+\section{Technology Stack}
+\begin{itemize}
+\item Next.js 16.3.0
+\item React 19.2.8
+\item TypeScript 5
+\item Tailwind CSS 4
+\item App Router
+\item TipTap extensions for rich communication content
+\end{itemize}
+
+\section{Route Structure}
+Routes live under \texttt{src/app}. Major route families include \texttt{/students}, \texttt{/guardians}, \texttt{/academics}, \texttt{/attendance}, \texttt{/communication}, and \texttt{/staff}.
+
+\section{Feature Structure}
+Feature code lives under \texttt{src/features}. Common patterns include:
+\begin{itemize}
+\item \texttt{types/} for domain models
+\item \texttt{schemas/} for Zod validation
+\item \texttt{services/} for rules and mock data
+\item \texttt{actions/} for server actions
+\item \texttt{components/} for feature UI
+\end{itemize}
+
+\input{diagrams/frontend-architecture}
+
+\section{Reusable UI}
+Shared primitives include \texttt{Button}, \texttt{Badge}, \texttt{Card}, \texttt{PageHeader}, \texttt{SectionHeader}, \texttt{EmptyState}, \texttt{Field}, and \texttt{Select}.
+
+\input{diagrams/module-dependencies}

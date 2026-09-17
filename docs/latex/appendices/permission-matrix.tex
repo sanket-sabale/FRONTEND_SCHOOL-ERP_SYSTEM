@@ -1,0 +1,63 @@
+\chapter{Permission Matrix}
+\label{app:permissions}
+\section{Permissions}
+\begin{longtable}{@{}p{0.34\textwidth}p{0.56\textwidth}@{}}
+\toprule
+\textbf{Permission} & \textbf{Purpose}\\
+\midrule
+\code{dashboard.view} & Dashboard and broad application shell access.\\
+\code{student.view/create/update/archive/manage} & Student read and mutation operations.\\
+\code{guardian.view/create/update/archive/link/manage} & Guardian records and links.\\
+\code{academic.view/manage} & Academic years, classes, sections, placements, promotions.\\
+\code{attendance.view/mark/update/correct/manage/report} & Attendance dashboards, marking, repair, reports.\\
+\code{attendance.history.view} & Attendance history routes.\\
+\code{attendance.integrity.view} & Attendance integrity and audit routes.\\
+\code{fees.view} & Finance/fees placeholder and payment-related surfaces.\\
+\code{exam.publish} & Assessment/examination navigation permissions.\\
+\code{hr.view/manage} & Staff, HR, leave, attendance, documents, accounts, performance, assignments, workload.\\
+\code{admin.manage} & Administration placeholders.\\
+\code{communication.view/send/broadcast/notice.create/manage} & Communication Center capabilities.\\
+\bottomrule
+\end{longtable}
+
+\section{Role-Permission Matrix}
+\tiny
+\begin{longtable}{@{}p{0.22\textwidth}ccccc@{}}
+\toprule
+\textbf{Permission} & \textbf{Principal} & \textbf{Teacher} & \textbf{Accountant} & \textbf{HR} & \textbf{System Admin}\\
+\midrule
+\code{dashboard.view} & Y & Y & Y & Y & Y\\
+\code{student.view} & Y & Y & Y & N & Y\\
+\code{student.create} & Y & N & N & N & Y\\
+\code{student.update} & Y & N & N & N & Y\\
+\code{student.archive} & Y & N & N & N & Y\\
+\code{student.manage} & Y & N & N & N & Y\\
+\code{guardian.view} & Y & N & Y & N & Y\\
+\code{guardian.create} & Y & N & N & N & Y\\
+\code{guardian.update} & Y & N & N & N & Y\\
+\code{guardian.archive} & Y & N & N & N & Y\\
+\code{guardian.link} & Y & N & N & N & Y\\
+\code{guardian.manage} & Y & N & N & N & Y\\
+\code{academic.view} & Y & Y & N & N & Y\\
+\code{academic.manage} & Y & N & N & N & Y\\
+\code{attendance.view} & Y & Y & Y & Y & Y\\
+\code{attendance.mark} & Y & Y & N & Y & Y\\
+\code{attendance.update} & Y & Y & N & N & Y\\
+\code{attendance.correct} & Y & N & N & N & Y\\
+\code{attendance.history.view} & Y & Y & Y & N & Y\\
+\code{attendance.manage} & Y & N & N & N & Y\\
+\code{attendance.report} & Y & N & Y & N & Y\\
+\code{attendance.integrity.view} & Y & N & N & N & Y\\
+\code{fees.view} & Y & N & Y & N & Y\\
+\code{exam.publish} & Y & N & N & N & N\\
+\code{hr.view} & Y & N & N & Y & Y\\
+\code{hr.manage} & Y & N & N & Y & Y\\
+\code{admin.manage} & N & N & N & N & Y\\
+\code{communication.view} & Y & Y & Y & Y & Y\\
+\code{communication.send} & Y & Y & Y & Y & Y\\
+\code{communication.broadcast} & Y & N & N & N & Y\\
+\code{communication.notice.create} & Y & N & N & N & Y\\
+\code{communication.manage} & Y & N & N & N & Y\\
+\bottomrule
+\end{longtable}
+\normalsize

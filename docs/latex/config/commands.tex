@@ -1,0 +1,16 @@
+\newcommand{\frontmatterstyle}{\pagenumbering{roman}}
+\newcommand{\mainmatterstyle}{\clearpage\pagenumbering{arabic}}
+\newcommand{\implemented}{\textcolor{Success}{\textbf{Implemented}}}
+\newcommand{\partialstatus}{\textcolor{Warning}{\textbf{Partially Implemented}}}
+\newcommand{\mockonly}{\textcolor{Info}{\textbf{Mock Only}}}
+\newcommand{\placeholder}{\textcolor{Warning}{\textbf{Placeholder}}}
+\newcommand{\future}{\textcolor{TextMuted}{\textbf{Future Scope}}}
+\newcommand{\notimplemented}{\textcolor{Danger}{\textbf{Not Implemented}}}
+\newcommand{\planned}{\textcolor{Info}{\textbf{Planned}}}
+\newcommand{\code}[1]{\texttt{#1}}
+\newtcolorbox{importantbox}{enhanced,breakable,colback=SurfaceMuted,colframe=Primary,title=Important,fonttitle=\bfseries}
+\newtcolorbox{securitybox}{enhanced,breakable,colback=red!3,colframe=Danger,title=Security,fonttitle=\bfseries}
+\newtcolorbox{statusbox}{enhanced,breakable,colback=blue!3,colframe=Info,title=Status,fonttitle=\bfseries}
+\newtcolorbox{warningbox}{enhanced,breakable,colback=orange!5,colframe=Warning,title=Warning,fonttitle=\bfseries}
+\lstdefinestyle{erpcode}{basicstyle=\small\ttfamily,breaklines=true,frame=single,rulecolor=\color{Border},backgroundcolor=\color{SurfaceMuted},keywordstyle=\color{Primary}\bfseries,commentstyle=\color{TextMuted},stringstyle=\color{Success},showstringspaces=false}
+\lstset{style=erpcode}

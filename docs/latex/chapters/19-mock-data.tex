@@ -1,0 +1,10 @@
+\chapter{Mock Data Architecture}
+\section{Locations}
+Mock data is stored in feature service files such as \code{mock-staff.ts}, \code{mock-staff-workload.ts}, \code{mock-attendance.ts}, \code{mock-student-promotions.ts}, \code{mock-academic-structure.ts}, and related files.
+
+\section{Characteristics}
+Mock data is deterministic and often tenant-aware. Some services keep mutable in-memory arrays for create/update flows during a dev session.
+
+\begin{warningbox}
+Mock data is not production persistence. It resets with application process lifecycle and has no database durability, migrations, backups, or transaction guarantees.
+\end{warningbox}

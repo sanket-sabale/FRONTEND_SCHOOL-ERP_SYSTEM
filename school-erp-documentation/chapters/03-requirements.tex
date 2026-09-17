@@ -1,0 +1,25 @@
+\chapter{Requirements}
+\section{Functional Requirements}
+\begin{itemize}
+\item Manage students, guardians, staff, academic structure, attendance, communication, promotions, and staff workload.
+\item Enforce route-level and action-level permissions.
+\item Preserve tenant, school, campus, and academic year scope for domain operations.
+\item Provide responsive ERP interfaces for desktop, tablet, and mobile.
+\end{itemize}
+
+\section{Non-Functional Requirements}
+\begin{itemize}
+\item Maintainable modular monolith architecture.
+\item TypeScript-first domain modeling.
+\item Server-side validation through schemas and service rules.
+\item Professional UI with light/dark theme tokens.
+\item Build validation through TypeScript, ESLint, and Next.js production build.
+\end{itemize}
+
+\section{Security and Tenant Requirements}
+\begin{securitybox}
+Client-provided \texttt{tenantId} or \texttt{tenant\_id} must never be trusted as authorization authority. Tenant scope must come from trusted request/session context.
+\end{securitybox}
+
+\section{MVP and Future Distinction}
+Implemented modules are documented as current. Future items such as payroll, recruitment, biometric integrations, WhatsApp/SMS, full timetable generation, and production database migrations are future or not implemented.

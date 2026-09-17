@@ -1,0 +1,14 @@
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[node distance=10mm, box/.style={draw,rounded corners,align=center,minimum width=34mm,minimum height=10mm,fill=SurfaceMuted}]
+\node[box] (auth) {Authentication};
+\node[box,right=of auth] (ctx) {Trusted Tenant Context};
+\node[box,right=of ctx] (svc) {Tenant-scoped Service};
+\node[box,below=of svc] (safe) {Query includes\\tenantId, schoolId, campusId, academicYearId};
+\draw[-{Latex},thick] (auth) -- (ctx);
+\draw[-{Latex},thick] (ctx) -- (svc);
+\draw[-{Latex},thick] (svc) -- (safe);
+\end{tikzpicture}
+\caption{Multi-tenant access must be resolved from trusted context, never from client authority.}
+\label{fig:multi-tenancy}
+\end{figure}

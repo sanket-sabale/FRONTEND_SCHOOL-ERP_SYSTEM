@@ -1,0 +1,18 @@
+\chapter{Attendance}
+\section{Status}
+\statusimplemented
+
+\section{Student Attendance Workstation}
+The route \texttt{/attendance/mark} is implemented as an attendance-taking workspace. It uses URL-backed date/class/section context, tenant-scoped roster loading, local status counters, optional check-in time, remarks, and save through \texttt{markAttendanceAction}.
+
+\section{Statuses}
+Student attendance statuses include present, absent, late, excused, half-day, and leave. The UI defaults to present where records are not already present and supports bulk mark-all-present.
+
+\section{Staff Attendance}
+Staff attendance is implemented under \texttt{src/features/staff-attendance} with dashboard/history routes under \texttt{/staff/attendance}.
+
+\section{Integrity and Reporting}
+Attendance reports, exports, repair queues, integrity snapshots, and audit routes exist under \texttt{/attendance}. These are implemented as controlled operational surfaces, not unrestricted mutation tools.
+
+\section{UX Principle}
+The attendance marking screen is designed for efficient large-roster use, immediate counters, tenant-scoped validation, and minimal unnecessary navigation.

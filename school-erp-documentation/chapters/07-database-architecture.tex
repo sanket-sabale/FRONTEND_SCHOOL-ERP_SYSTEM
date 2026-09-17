@@ -1,0 +1,17 @@
+\chapter{Database Architecture}
+\section{Current Persistence}
+The repository currently uses deterministic mock and in-memory data. There is no Prisma schema or PostgreSQL migration set in the current source.
+
+\section{Planned Database Model}
+\statusplanned{} production persistence should use PostgreSQL with Prisma. The recommended SaaS model is shared database and shared schema, with tenant-owned tables containing \texttt{tenant\_id}; current app scope also includes school, campus, and academic year identifiers.
+
+\section{Data Rules}
+\begin{itemize}
+\item Employee numbers are unique per tenant in the Staff domain.
+\item Staff and academic assignments are tenant/school/campus/academic-year scoped in the current mock architecture.
+\item Future tables should include timestamps and foreign keys where appropriate.
+\item Soft deletion is recommended for business records, especially staff and students.
+\end{itemize}
+
+\section{Migration Strategy}
+Not currently specified in project documentation. Future migrations should be reviewed with tenant isolation and rollback strategy in mind.

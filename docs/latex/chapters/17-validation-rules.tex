@@ -1,0 +1,13 @@
+\chapter{Validation and Business Rules}
+\section{Validation Architecture}
+The app uses Zod schemas and service-level rules. Schemas live under feature \code{schemas} directories; domain rules live under feature \code{services/*-rules.ts}.
+
+\section{Examples}
+\begin{itemize}
+\item Staff lifecycle transitions are centralized in \code{staff-rules.ts}.
+\item Attendance date/status validation is centralized in attendance schemas/rules/services.
+\item Promotion safeguards are implemented in promotion rules and batch/audit rules.
+\item Staff academic assignment duplicate and primary-responsibility conflict checks are service-side.
+\item Workload status and readiness thresholds are centralized in \code{staff-workload-rules.ts}.
+\item Staff account linking rejects duplicate and cross-tenant scenarios through service rules.
+\end{itemize}

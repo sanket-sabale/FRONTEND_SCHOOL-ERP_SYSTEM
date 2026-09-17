@@ -1,0 +1,22 @@
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[node distance=6mm, box/.style={draw,rounded corners,align=center,minimum width=30mm,minimum height=8mm,fill=SurfaceMuted}]
+\node[box] (root) {Navigation};
+\node[box,below left=of root] (people) {People};
+\node[box,below=of root] (academics) {Academics};
+\node[box,below right=of root] (attendance) {Attendance};
+\node[box,below=of people] (staff) {Staff};
+\node[box,below=of staff] (workload) {Workload};
+\node[box,below=of academics] (promotions) {Promotions};
+\node[box,below=of attendance] (integrity) {Integrity};
+\draw[-{Latex},thick] (root) -- (people);
+\draw[-{Latex},thick] (root) -- (academics);
+\draw[-{Latex},thick] (root) -- (attendance);
+\draw[-{Latex},thick] (people) -- (staff);
+\draw[-{Latex},thick] (staff) -- (workload);
+\draw[-{Latex},thick] (academics) -- (promotions);
+\draw[-{Latex},thick] (attendance) -- (integrity);
+\end{tikzpicture}
+\caption{High-level navigation hierarchy from \code{src/config/navigation.ts}.}
+\label{fig:navigation}
+\end{figure}

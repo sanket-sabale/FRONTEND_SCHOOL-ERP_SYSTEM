@@ -1,0 +1,18 @@
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[node distance=8mm, layer/.style={draw,rounded corners,align=center,minimum width=76mm,minimum height=9mm,fill=SurfaceMuted}]
+\node[layer] (browser) {Browser / User};
+\node[layer,below=of browser] (next) {Next.js App Router Pages};
+\node[layer,below=of next] (ui) {Shared UI + Feature Components};
+\node[layer,below=of ui] (actions) {Server Actions / \code{src/lib/api} Boundary};
+\node[layer,below=of actions] (services) {Domain Services, Schemas, Rules};
+\node[layer,below=of services] (mock) {Tenant-aware Mock/In-memory Data};
+\draw[-{Latex},thick] (browser) -- (next);
+\draw[-{Latex},thick] (next) -- (ui);
+\draw[-{Latex},thick] (ui) -- (actions);
+\draw[-{Latex},thick] (actions) -- (services);
+\draw[-{Latex},thick] (services) -- (mock);
+\end{tikzpicture}
+\caption{Actual current application architecture.}
+\label{fig:architecture}
+\end{figure}

@@ -1,0 +1,16 @@
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[node distance=12mm, box/.style={draw,rounded corners,align=center,minimum width=34mm,minimum height=10mm,fill=SurfaceMuted}]
+\node[box] (client) {Web Client};
+\node[box,right=of client] (next) {Next.js App};
+\node[box,right=of next] (api) {Future NestJS API};
+\node[box,below=of api] (db) {Future PostgreSQL};
+\node[box,below=of next] (storage) {Future Object Storage};
+\draw[-{Latex},thick] (client) -- (next);
+\draw[-{Latex},thick,dashed] (next) -- (api);
+\draw[-{Latex},thick,dashed] (api) -- (db);
+\draw[-{Latex},thick,dashed] (api) -- (storage);
+\end{tikzpicture}
+\caption{Practical deployment direction; backend/storage are future production concerns.}
+\label{fig:deployment}
+\end{figure}

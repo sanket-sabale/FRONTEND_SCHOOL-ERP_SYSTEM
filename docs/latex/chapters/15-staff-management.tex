@@ -1,0 +1,27 @@
+\chapter{Staff Management}
+\input{diagrams/staff-lifecycle}
+\section{Status}
+\implemented{} through Staff Phase 8.
+
+\section{Core Routes}
+Core staff routes include \code{/staff}, \code{/staff/new}, \code{/staff/[staffId]}, and \code{/staff/[staffId]/edit}.
+
+\section{Implemented Phase Map}
+\begin{longtable}{@{}p{0.12\textwidth}p{0.28\textwidth}p{0.50\textwidth}@{}}
+\toprule
+\textbf{Phase} & \textbf{Name} & \textbf{Implemented Scope}\\
+\midrule
+0 & Domain Foundation & Staff identity, employee number, lifecycle, tenant scope.\\
+1 & Directory / Staff 360 & Directory, profile, create/edit, lifecycle.\\
+2 & Organization & Departments and designations.\\
+3 & Attendance / Leave & Staff attendance and leave routes/modules.\\
+4 & Documents / Employment & Document verification/expiry and employment records.\\
+5 & Accounts / Permissions & Staff-user account visibility, link/create routes, role summary.\\
+6 & HR / Performance & HR operations and performance cycles/reviews/goals/training.\\
+7 & Academic Assignments & Academic responsibility records and status transitions.\\
+8 & Workload & Workload configuration, availability, conflicts, readiness.\\
+\bottomrule
+\end{longtable}
+
+\section{Explicitly Not Implemented}
+Payroll, recruitment, biometric integration, real timetable generation, and automatic scheduling are not implemented.

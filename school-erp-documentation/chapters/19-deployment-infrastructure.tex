@@ -1,0 +1,20 @@
+\chapter{Deployment and Infrastructure}
+\section{Current State}
+Deployment infrastructure is not currently specified beyond standard Next.js development and production build scripts.
+
+\section{Recommended Practical Infrastructure}
+\statusplanned{} production infrastructure should include:
+\begin{itemize}
+\item Next.js frontend deployment.
+\item Future NestJS API service.
+\item PostgreSQL database.
+\item Object storage for documents.
+\item CI/CD running TypeScript, ESLint, build, and tests.
+\item Environment variable and secret management.
+\item Backup and migration process.
+\end{itemize}
+
+\input{diagrams/deployment}
+
+\section{Avoiding Over-Engineering}
+The system should remain a modular monolith until product scale justifies service extraction.

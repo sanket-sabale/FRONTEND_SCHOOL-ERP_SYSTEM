@@ -1,0 +1,15 @@
+\chapter{Backend Architecture}
+\section{Current Backend Boundary}
+The current project does not contain a NestJS backend. Instead, server components and server actions call mock-backed services under \texttt{src/lib/api} and feature service modules.
+
+\section{Planned Backend Direction}
+\statusplanned{} production backend responsibilities include NestJS modules, controllers, services, repositories, DTO validation, guards, tenant middleware, logging, and database persistence.
+
+\begin{decisionbox}
+Controllers must not access the database directly. The intended boundary is Controller $\rightarrow$ Service $\rightarrow$ Repository $\rightarrow$ Database. This keeps validation, authorization, tenant checks, and business rules centralized.
+\end{decisionbox}
+
+\input{diagrams/backend-module}
+
+\section{Current Error Handling}
+The project uses \texttt{ApiError} with numeric-style API error codes and route-specific friendly unavailable states. Technical stack traces are not intended for user-facing views.

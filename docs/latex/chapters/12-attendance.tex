@@ -1,0 +1,15 @@
+\chapter{Attendance}
+\section{Student Attendance}
+Student attendance routes include \code{/attendance}, \code{/attendance/mark}, \code{/attendance/history}, \code{/attendance/history/[attendanceId]}, \code{/attendance/reports}, and \code{/attendance/export}.
+
+\section{Integrity and Repair}
+Attendance integrity routes include \code{/attendance/integrity}, detail, audit, repair queue, repair detail, and bulk repair routes.
+
+\section{Mark Attendance UI}
+The \code{/attendance/mark} route uses URL-backed date/class/section selection, tenant-scoped roster loading, status counters, per-student status/check-in/remarks fields, bulk mark-all-present, reset, and server action save.
+
+\section{Staff Attendance}
+Staff attendance routes are \code{/staff/attendance} and \code{/staff/attendance/history}. Staff attendance is implemented under \code{src/features/staff-attendance}.
+
+\section{Permissions}
+Attendance permissions include \code{attendance.view}, \code{attendance.mark}, \code{attendance.update}, \code{attendance.correct}, \code{attendance.history.view}, \code{attendance.manage}, \code{attendance.report}, and \code{attendance.integrity.view}.

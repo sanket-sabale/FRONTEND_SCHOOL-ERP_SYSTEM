@@ -1,0 +1,16 @@
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[node distance=8mm, box/.style={draw,rounded corners,align=center,minimum width=36mm,minimum height=9mm,fill=SurfaceMuted}]
+\node[box] (controller) {Controller / Route};
+\node[box,below=of controller] (guard) {Guard / Permission};
+\node[box,below=of guard] (service) {Domain Service};
+\node[box,below=of service] (repo) {Repository};
+\node[box,below=of repo] (db) {Database};
+\draw[-{Latex},thick] (controller) -- (guard);
+\draw[-{Latex},thick] (guard) -- (service);
+\draw[-{Latex},thick] (service) -- (repo);
+\draw[-{Latex},thick] (repo) -- (db);
+\end{tikzpicture}
+\caption{Planned backend module layering.}
+\label{fig:backend-module}
+\end{figure}

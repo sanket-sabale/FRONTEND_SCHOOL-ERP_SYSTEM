@@ -1,0 +1,21 @@
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[node distance=8mm, mod/.style={draw,rounded corners,align=center,minimum width=28mm,minimum height=9mm,fill=SurfaceMuted}]
+\node[mod] (tenant) {Tenant Context};
+\node[mod,below left=of tenant] (students) {Students};
+\node[mod,below=of tenant] (staff) {Staff};
+\node[mod,below right=of tenant] (academic) {Academics};
+\node[mod,below=of students] (attendance) {Attendance};
+\node[mod,below=of staff] (workload) {Workload};
+\node[mod,below=of academic] (promotions) {Promotions};
+\draw[-{Latex},thick] (tenant) -- (students);
+\draw[-{Latex},thick] (tenant) -- (staff);
+\draw[-{Latex},thick] (tenant) -- (academic);
+\draw[-{Latex},thick] (students) -- (attendance);
+\draw[-{Latex},thick] (staff) -- (workload);
+\draw[-{Latex},thick] (academic) -- (promotions);
+\draw[-{Latex},thick] (academic) -- (workload);
+\end{tikzpicture}
+\caption{Major implemented module relationships.}
+\label{fig:module-dependencies}
+\end{figure}

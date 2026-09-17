@@ -1,0 +1,20 @@
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[node distance=7mm, box/.style={draw,rounded corners,align=center,minimum width=31mm,minimum height=8mm,fill=SurfaceMuted}]
+\node[box] (staff) {Staff 360};
+\node[box,below left=of staff] (account) {Account};
+\node[box,below=of staff] (employment) {Employment};
+\node[box,below right=of staff] (docs) {Documents};
+\node[box,below=of employment] (assign) {Academic\\Assignments};
+\node[box,left=of assign] (attendance) {Attendance\\Leave};
+\node[box,right=of assign] (workload) {Workload\\Readiness};
+\draw[-{Latex},thick] (staff) -- (account);
+\draw[-{Latex},thick] (staff) -- (employment);
+\draw[-{Latex},thick] (staff) -- (docs);
+\draw[-{Latex},thick] (staff) -- (assign);
+\draw[-{Latex},thick] (staff) -- (attendance);
+\draw[-{Latex},thick] (staff) -- (workload);
+\end{tikzpicture}
+\caption{Staff Management module map through Phase 8.}
+\label{fig:staff-management-map}
+\end{figure}

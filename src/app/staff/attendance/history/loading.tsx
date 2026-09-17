@@ -1,0 +1,14 @@
+import { AppShell } from "@/components/app-shell";
+import { Card, PageHeader } from "@/components/ui";
+
+export default function StaffAttendanceHistoryLoading() {
+  return (
+    <AppShell>
+      <div className="erp-container space-y-4">
+        <PageHeader eyebrow="Staff Attendance" title="Loading history" description="Preparing attendance history." />
+        <Card className="h-28 animate-pulse bg-surface-muted" />
+        <Card className="h-80 animate-pulse bg-surface-muted" />
+      </div>
+    </AppShell>
+  );
+}
