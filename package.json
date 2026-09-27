@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "node --test tests/admissions-domain.test.mjs tests/admissions-service.test.mjs tests/admission-finance.test.mjs tests/enrollment-service.test.mjs tests/admission-communication.test.mjs tests/phase-11-architecture.test.mjs tests/finance-core.test.mjs"
+    "test": "node --test tests/admissions-domain.test.mjs tests/admissions-service.test.mjs tests/admission-finance.test.mjs tests/enrollment-service.test.mjs tests/admission-communication.test.mjs tests/phase-11-architecture.test.mjs tests/finance-core.test.mjs tests/bff-session-contract.test.mjs"
   },
   "dependencies": {
     "@tiptap/extension-color": "^3.30.0",
