@@ -1,8 +1,8 @@
 # Browser Session + Thin Next.js BFF Security Contract
 
-Milestone 0.5 · 2026-09-26 · Contract version 0.5
+Milestone 0.5 · 2026-09-26 · Contract version 0.5 with D1–D6 follow-up 2026-09-27
 
-**Status: security invariants and executable transition contract defined; deployment bindings OPEN. Not a deployed BFF or a production-readiness claim.** The user's Milestone 0.5 instruction selects opaque HttpOnly cookies and server-held credentials. It supersedes the earlier audit's open choice between browser bearer storage and a BFF. It does not supply store, topology or lifetime values; those remain explicit release gates.
+**Status: D1–D6 PARTIAL.** Approved deployment/security policy values are now frozen and repository adapters are implemented. Live deployment qualification remains a release gate. Historical Milestone 0.5 results remain unchanged in its report. The [deployment decisions](BFF-DEPLOYMENT-DECISIONS.md) record values, implementation evidence, operational procedures and unresolved infrastructure facts. No authentication routes or cookie issuance are active.
 
 ## 1. Purpose, scope and evidence
 
@@ -30,7 +30,7 @@ BFF duties: cookie/session lookup, CSRF/origin validation, auth exchanges, crede
 
 No generic useAuth, generic credential resolver or arbitrary proxy. Separate PlatformSession/TenantSession, brokers, namespaces and facades. A browser can hold both cookies simultaneously; each route reads only its own context. Being a platform administrator confers no tenant session. Shared low-level cryptography, policy and CAS transitions do not choose context from browser input.
 
-Non-goals: platform screens, tenant rewrite, mock migration, new Spring auth system, OAuth implementation, provider configuration, mobile login, business transport, session-store vendor selection and deployment qualification. No new BFF routes are active in this milestone.
+Non-goals: platform screens, tenant rewrite, mock migration, new Spring auth system, OAuth implementation, provider configuration, mobile login, business transport, deployment qualification. No new BFF routes are active in this milestone.
 
 ## 3. Verified backend differences
 
@@ -66,22 +66,22 @@ Rotate ID and CSRF binding on successful login/reauthentication and successful t
 
 Deletion uses the same name, Path, flags and no Domain, with Max-Age=0 and epoch Expires. Delete only the selected context. Server invalidation is authoritative; clearing a cookie alone is insufficient.
 
-Explicit local HTTP exception: opt-in development mode, loopback origin only (`localhost`, `127.0.0.1`, `::1`), names `dev_schoolerp_platform_session` and `dev_schoolerp_tenant_session`, Secure omitted, all other restrictions retained. Production/staging use HTTPS names and must refuse local mode. Never use a __Host name without Secure. The primitive takes an explicit mode; future startup configuration must enforce environment binding. No production origin is inferred from Host.
+Explicit local HTTP exception: opt-in development mode, loopback origin only (`localhost`, `127.0.0.1`, `::1`), names `dev_schoolerp_platform_session` and `dev_schoolerp_tenant_session`, Secure omitted, all other restrictions retained. Production/staging use HTTPS names and must refuse local mode. Never use a __Host name without Secure. The primitive takes an explicit mode; startup configuration enforces environment binding. No production origin is inferred from Host.
 
 ## 5. Session store and secret storage
 
-The store adapter is **not selected or implemented**. Its conformance contract requires:
+The selected authority is **Cloud SQL PostgreSQL HA**, isolated in a dedicated BFF database/schema `schoolerp_bff`. The repository now contains a PostgreSQL 17+ adapter and migration, with real local PostgreSQL transaction tests. Cloud SQL HA/failover has not been verified. Its conformance requirements remain:
 
 - Expected O(1) namespace/key lookup and record updates, expiry checked on every authenticated operation; TTL is cleanup, not authorization.
 - Atomic create-if-absent, linearizable get/CAS, atomic old-ID invalidation + replacement creation, explicit expire, versioned tombstone and eventual tombstone deletion.
 - Shared state and fencing across all Next workers/instances; no process-local fallback. Per-process promise deduplication may optimize but cannot authorize dispatch.
 - Durable acknowledged refresh-dispatch records that survive failover. If a store can roll back an acknowledged DISPATCHED marker, it cannot safely coordinate single-use credentials. Store/provider choice must establish this property; a Redis name alone does not establish it.
-- Finite lease/deadline and bounded wait; values depend on upstream timeout, clock bounds and topology (OPEN). Once a lease expires, this contract invalidates the session rather than allowing refresh takeover—even for RESERVED. This deliberately favors safety over availability.
+- Finite lease/deadline and bounded wait; values are bound by D6 (30s lease, 5s waiter, 10s upstream response budget, 60s clock budget), with real deployment latency/clock qualification outstanding. Once a lease expires, this contract invalidates the session rather than allowing refresh takeover—even for RESERVED. This deliberately favors safety over availability.
 - On unavailable/ambiguous store read/write: deny credential use, return 503; no cookie-derived or memory-derived bypass. Reconcile a timed-out CAS by authoritative read before any dispatch. If reconciliation is impossible, no dispatch.
 
 Record schema in `src/server/bff/session-contract.ts` is the executable **transition subset**, not a production persistence schema. Full adapter record must include: context-bound key, schema/version/generation, createdAt, lastAccessedAt (for approved POST activity), idleExpiresAt, absoluteExpiresAt, accessExpiresAt, method/provider metadata when verified, current credential-envelope reference, credentialVersion, CSRF verifier, safe identity binding established by me, status and refresh attempt. Platform identity binding may retain backend sessionId server-side; tenant retains accountId/tenantId/membershipId and has no invented backend session ID.
 
-Credential envelope: access + refresh pair encrypted together with authenticated encryption, key ID and unique nonce; associated data binds environment, context, session key and credential version. Keys come from a managed secret/KMS boundary, separate from stored ciphertext and backups. Access restricted to BFF runtime/adapter; encryption-at-rest and TLS on store connections required. Never store credentials in generic app data. The envelope reference is not a browser field. Version/CAS commits the pair atomically; secret-store writes before failed CAS require orphan cleanup. Garbage collection must not expose or replay an orphan pair. Key rotation, retention and restore policy are OPEN deployment decisions.
+Credential envelope: access + refresh pair encrypted together with authenticated encryption, key ID and unique nonce; associated data binds environment, context, session key and credential version. Keys come from a managed secret/KMS boundary, separate from stored ciphertext and backups. Access restricted to BFF runtime/adapter; encryption-at-rest and TLS on store connections required. Never store credentials in generic app data. The envelope reference is not a browser field. Version/CAS commits the pair atomically; secret-store writes before failed CAS require orphan cleanup. Garbage collection must not expose or replay an orphan pair. Key IDs are pinned; no automatic rotation. Planned rotation invalidates/drains sessions unless a separately reviewed read-key migration is added. Restored session history must be quarantined and sessions invalidated. KMS ownership, backup access and orphan cleanup procedures are recorded in the deployment decision document; live drills remain gates.
 
 Session records contain no business objects, tenant lists, subscription data or permission catalog. Safe roles/permissions snapshots, if retained briefly for UI, are never backend authorization. Avoid persisting them unless needed; fetch me for restoration, not before every business request.
 
@@ -103,11 +103,11 @@ type TenantSession = {
 
 These are BFF DTOs, not claimed Spring DTOs. expiresAt means **BFF effective expiry** (minimum current idle/absolute deadline), not backend refresh/session expiry. Other identity fields come only from the corresponding successfully validated me response. No fabricated name/email/account profile. Platform sessionId/assurance are omitted from the browser projection unless a later UX requirement justifies them. Never spread an upstream token response/record into JSON or RSC props. Unauthenticated response has authenticated:false and the explicit context, without identity fields.
 
-Runtime response validation and secret-safe error normalization are Milestone 1/2 work; TypeScript does not validate JSON. `safeSession` is an allowlist projector for already validated identity, not a validator. method PASSWORD/OIDC and optional provider identifier are server-only metadata; current backend assurance is not reinterpreted as a universal method enum.
+The HTTP foundation now supplies bounded parsing, safe error normalization and runtime login/refresh/identity validators. See the [Milestone 1 repository report](../phase-12b-milestone-1.md). No authentication route is activated. `safeSession` is an allowlist projector for already validated identity, not a validator. method PASSWORD/OIDC and optional provider identifier are server-only metadata; current backend assurance is not reinterpreted as a universal method enum.
 
 ## 7. Origin, headers and CSRF
 
-One configured canonical browser origin per deployment. `https://schoolerp.com` is a historical architecture target, **not confirmed deployment configuration**. Development may explicitly configure `http://localhost:3000`. Startup rejects invalid origin, non-HTTPS outside local exception, credentials/path/query/fragment. Staging/preview domains require explicit environment entries, not a wildcard. Do not derive allowlists from Origin, Referer, Host or forwarded headers. Trusted ingress routing must bind requests to that configured deployment.
+One configured canonical browser origin per deployment. `https://schoolerp.com` is a historical architecture target, **not confirmed DNS or live deployment configuration**. Development may explicitly configure `http://localhost:3000`. Startup rejects invalid origin, non-HTTPS outside local exception, credentials/path/query/fragment. Staging/preview domains require explicit environment entries, not a wildcard. Do not derive allowlists from Origin, Referer, Host or forwarded headers. Trusted ingress routing must bind requests to that configured deployment.
 
 All state-changing routes require exact Origin match; missing/null Origin rejected with 403, no Referer fallback. If Sec-Fetch-Site is supplied, require same-origin (same-site subdomain is insufficient). Require application/json and `X-SchoolERP-CSRF` containing a context/session-bound unpredictable synchronizer token, verified in constant time against server state. No permissive CORS/preflight for BFF. SameSite is defense in depth, not the whole policy.
 
@@ -117,7 +117,7 @@ CSRF proof is not an authentication credential: it may exist transiently in clie
 
 Login also needs CSRF. Proposed `POST /api/bff/{context}/security/bootstrap` is a **new BFF-only** operation, no Spring endpoint. It requires exact Origin, same-origin Fetch Metadata when present, application/json and `X-SchoolERP-Bootstrap: 1`; it is the sole synchronizer-token bootstrap exception because there is no token yet. No CORS access, bounded body, rate limit and short-lived pre-auth records. Issue a separate opaque HttpOnly pre-auth cookie (same flags; `_preauth` suffix) and return its CSRF proof. Pre-auth cannot authorize data/refresh/logout. With a live selected-context session, bootstrap returns its existing proof without rotating ID or extending lifetime. Never overwrite an existing valid pre-auth record solely for another tab.
 
-Pre-auth cookie TTL, quota and selection-transaction TTL bounds are OPEN; no defaults silently enabled. POST login consumes pre-auth proof and creates a fresh authenticated record, then returns the new proof in the safe response. GET session can expose a previously established CSRF proof to same-origin code with no-store, but cannot create one or modify state. Bootstrap endpoint is deliberately not part of the auth mapping proof code; it requires a real store before implementation.
+Pre-auth TTL is 10 minutes and selection-transaction TTL is 5 minutes through typed config. Edge quota proposals are recorded under D5; enforcement remains a deployment gate. POST login consumes pre-auth proof and creates a fresh authenticated record, then returns the new proof in the safe response. GET session can expose a previously established CSRF proof to same-origin code with no-store, but cannot create one or modify state. Bootstrap endpoint is deliberately not part of the auth mapping proof code; it requires a real store before implementation.
 
 ### Header policy
 
@@ -165,7 +165,7 @@ Restoration: UNKNOWN -> GET context/session with cookie -> lookup/expiry check -
 
 ## 10. Lifetimes and activity
 
-OPEN: idle/absolute durations for each context, pre-auth and selection bounds, refresh lead time, clock-skew budget and operational deadlines. Required configuration must have no production defaults inferred from examples. Cookie expiry is absolute; server record idle expiry can terminate earlier. POST refresh or explicit CSRF-protected POST activity may advance idle deadline only up to absolute deadline. GET/prefetch/background polling must not prolong sessions. Last-access bookkeeping is committed with approved mutations, not a hidden GET write.
+D3/D6 are bound: Platform idle 30m/absolute 12h; Tenant idle 8h/absolute 30d; pre-auth 10m; selection 5m; refresh lead and clock budget 60s. Operational limits are centralized in config.ts and the runtime template. Required configuration must have no production defaults inferred from examples. Cookie expiry is absolute; server record idle expiry can terminate earlier. POST refresh or explicit CSRF-protected POST activity may advance idle deadline only up to absolute deadline. GET/prefetch/background polling must not prolong sessions. Last-access bookkeeping is committed with approved mutations, not a hidden GET write.
 
 Platform BFF absolute deadline must be no later than a verified conservative backend session bound. Current backend does not return that bound; use a deployment-owned TTL contract aligned with actual Spring configuration and a conservative login-request start time/clock budget, or separately propose a minimal expiry metadata addition. Do not invent a backend expiry field. Backend is still authoritative if it rejects earlier. Tenant BFF must have its own finite absolute cap even though refresh rotation currently extends token expiry. Access expiry is calculated conservatively from respective expiresIn/expiresInSeconds, never used to bypass Spring validation.
 
@@ -212,7 +212,7 @@ Network/5xx -> NETWORK_UNCERTAIN_LOGOUT -> local tombstone + cookie clear
 
 Logout intent is stored before any network call. It fences all refresh completions; a late result cannot reactivate, extend expiry or set a cookie. If refresh is already RESERVED/DISPATCHED, the initial contract makes logout local and marks backend revocation unconfirmed instead of racing the consumed credential. No new refresh is started after logout intent. An expired bearer may cause backend logout rejection: still invalidate locally, **do not claim backend revocation**. A later dedicated revocation-only cleanup worker could use a known late replacement, but is not part of this milestone and must never reactivate the session.
 
-For an idle ACTIVE session with usable bearer, call logout once using the known pair. On uncertain network result do not replay automatically. Delete credential references and retain non-authenticating tombstone/outcome for a bounded retention period sufficient to reject all outstanding writes; missing record must never be recreated by an update. Tombstone retention/request limits are OPEN operational values. Browser local logout succeeds only after durable invalidation; store outage cannot be represented as confirmed local deletion. Clear cookie and return safe 503/uncertain outcome, flag unavailable server revocation, reject subsequent store-unavailable requests.
+For an idle ACTIVE session with usable bearer, call logout once using the known pair. On uncertain network result do not replay automatically. Delete credential references and retain non-authenticating tombstone/outcome for a bounded retention period sufficient to reject all outstanding writes; missing record must never be recreated by an update. Tombstone retention is 900000ms; auth request/response limits are 65536/262144 bytes; normal BFF requests are limited to 1048576 bytes when their handlers are added. Browser local logout succeeds only after durable invalidation; store outage cannot be represented as confirmed local deletion. Clear cookie and return safe 503/uncertain outcome, flag unavailable server revocation, reject subsequent store-unavailable requests.
 
 Repeated logout with no cookie is harmless no-op after origin/custom-header validation, clearing the selected cookie again. With a tombstoned cookie, retain a non-authenticating CSRF verifier long enough to acknowledge repeat safely; never require reauthentication to log out again. Browser outcome `{ authenticated:false, context, logoutOutcome }` is safe. Missing-cookie repetition must not claim a fresh backend call or revoke the other context. Already-sent business operations cannot be undone by logout; response delivery must recheck the tombstone and suppress stale sensitive output where feasible.
 
@@ -274,27 +274,49 @@ Require Node-capable Next deployment, HTTPS origin/ingress, fixed reachable Spri
 
 Safe telemetry: random per-request correlation, operation name/context, normalized outcome/status, latency, CAS contention, wait timeout, refresh uncertainty, store unavailability and logout revocation outcome. No Cookie/Set-Cookie/Authorization, credential bodies, passwords, raw IDs/hash keys, OAuth codes/state/secrets or rich identity payloads. Disable body/header capture in application, ingress, APM and analytics; errors must be redacted at source. Record deployment tests for log redaction before release.
 
-## 18. Open decisions and evidence needed
+## 18. Bound decisions and remaining runtime evidence
 
-| ID | OPEN DECISION | Required evidence / gate |
+| ID | Approved binding | Remaining release gate |
 | --- | --- | --- |
-| D1 | Production/staging/local origins and Spring upstream | Deployment configuration owned by operator; HTTPS/ingress trust list; blocks live routing |
-| D2 | Store provider, consistency and failover durability | Chosen managed shared store and tested linearizable CAS/no-dispatch-marker rollback; blocks real sessions |
-| D3 | Idle/absolute lifetimes per context; pre-auth lifetime; clock budget | Approved policy + deployed Spring TTL; no backend me expiry assumed; blocks cookie issuance |
-| D4 | Encryption key management, backups, envelope retention | KMS/secret ownership/rotation/restore access evidence; blocks persisted credentials |
-| D5 | Proxy topology and rate-limit identity | Trusted ingress model/load test; prevents collective throttling without spoofed client IP |
-| D6 | Timeouts/lease/wait bounds/tombstone retention/size limits | Deployment latency/clock constraints + fault tests; blocks coordinator adapter |
-| D7 | Future OAuth completion/client ownership/callback policy | Actual Spring capability and provider-independent ADR; does not block password-only foundation |
-| D8 | Browser E2E/test environment and accounts | Approved nonproduction stack and data; no secrets in repo; blocks claims of live validation |
+| D1 | GCP asia-south1; LB/Armor; Next restricted ingress; internal Spring; explicit production/staging/local origins | Actual project, DNS/TLS, VPC, Cloud Run ingress and service IAM verification |
+| D2 | Cloud SQL PostgreSQL 17+ HA; isolated BFF schema; transactional adapter | Provider provisioning, primary-only connectivity, no acknowledged DISPATCHED rollback under HA failover |
+| D3 | Platform idle 30m/absolute 12h; Tenant idle 8h/absolute 30d; pre-auth 10m; selection 5m; lead/skew 60s | Deployed Spring TTL alignment, clock monitoring, browser lifetime E2E |
+| D4 | AES-256-GCM credential pair; KMS-wrapped data key and pinned version; Secret Manager | KMS/IAM provisioning, rotation/restore/key-loss drill |
+| D5 | Cloud Armor edge policies; preserve Spring limits; never trust browser XFF | Edge preview/load test, BFF rate-limit aggregation and trusted-proxy decision |
+| D6 | Typed startup-required limits in config and runtime.env.template | Real latency/capacity measurements, telemetry and multi-instance failure qualification |
+| D7 | Future OAuth remains out of scope | Actual Spring completion/client ownership/callback design |
+| D8 | Local Node HTTP + PostgreSQL tests now exist | Browser E2E accounts and live staging environment |
 
-No silent values selected. Architectural shape is fixed by this contract; missing deployment bindings keep Milestone 0.5 **PARTIAL** rather than falsely fully frozen. Milestone 1 pure HTTP/error primitives can be developed from verified contracts, but live cookie/auth implementation must wait for D1–D6. Next recommended action is to resolve those bindings, then Milestone 1 HTTP Foundation.
+All exact values, rationale, failure behavior and security-review evidence are in
+[BFF-DEPLOYMENT-DECISIONS.md](BFF-DEPLOYMENT-DECISIONS.md). Binding policy values does
+not remove deployment release gates. Recommended progression: HTTP Foundation
+completion → Production Session Store Adapter qualification → Platform Authentication.
 
 ## 19. Backend changes and verification scope
 
 No backend code change is required for this documentation/primitive milestone. Password bearer endpoints, Spring Security, DTOs, RBAC, tenant resolution, rotation/replay rules and database business services remain intact. Same-origin BFF does not need Spring cookie auth or relaxed CORS. A deployment rate-limit/trusted-proxy adjustment may be required after D5 is decided. Optional explicit backend expiry metadata requires a separate justified change if configuration alignment cannot supply a safe bound. OAuth remains future backend/broker work, not a guessed route.
 
-Added `src/server/bff/session-contract.ts`, `security-policy.ts`, `session-transitions.ts` and focused tests. Primitives are not imported by existing UI and do not create an HTTP client/store. The transition functions propose changes; only an adapter's successful CAS authorizes side effects. The test-only AtomicStore models linearizable CAS in one process; it is deliberately not usable as a production adapter. Fake backend callbacks prove request construction, not live Spring logout.
+Added `src/server/bff/session-contract.ts`, `security-policy.ts`, `session-transitions.ts` and focused tests. Primitives are not imported by existing UI. The D1–D6 follow-up adds separate server-only HTTP, encryption, configuration and PostgreSQL modules; no live routes. The transition functions propose changes; only an adapter's successful CAS authorizes side effects. The test-only AtomicStore models linearizable CAS in one process; it is deliberately not usable as a production adapter. Fake backend callbacks prove request construction, not live Spring logout.
 
-Tests cover cookie flags/format/deletion, contexts, CSRF/origin, headers/fixed auth paths, three concurrent contenders/two worker objects, atomic replacement, lease expiry/no replay, stale fences, logout race/deletion/repetition, uncertainty, returnTo and PASSWORD/OIDC-safe projections. Missing production proof: store adapter conformance/failover, actual request retry wiring, bootstrap/selection/switch routes, cookie browser behavior and real-stack E2E. These remain acceptance tests for subsequent milestones.
+Tests cover cookie flags/format/deletion, contexts, CSRF/origin, headers/fixed auth paths, three concurrent contenders/two worker objects, atomic replacement, lease expiry/no replay, stale fences, logout race/deletion/repetition, uncertainty, returnTo and PASSWORD/OIDC-safe projections. Local adapter conformance and one-send HTTP tests now exist. Missing production proof: provider failover, live service IAM invocation, bootstrap/selection/switch routes, cookie browser behavior and real-stack E2E. These remain acceptance tests for subsequent milestones.
 
 Validation results are recorded in [Milestone 0.5 report](../phases/phase-12b-milestone-0-5.md).
+
+## 20. Milestone 2B follow-up — Option A approved
+
+Durable pre-auth and selection persistence now uses separate tables in the same
+BFF schema and the qualified PostgreSQL/encryption boundaries. Pending selection
+binds its originating login/pre-auth transaction, CSRF verifier, TENANT context,
+generation and expiry; it is not an authenticated account/session. Spring retains
+canonical account/membership authority. No accountId is required or fabricated
+before selection; `/api/auth/me` verifies the final identity.
+
+Durable CONSUMING permits one dispatch. Ambiguous outcomes revoke or remain fenced
+until expiry, without replay/takeover. Successful verification prepares a fresh
+encrypted handoff without persisting an authenticated session or issuing a cookie.
+No live browser handler is enabled.
+
+See [Milestone 2B evidence](../phase-12b-milestone-2b.md) for local PostgreSQL,
+independent-process and real local Spring qualification. This resolves the historical
+M2 pending-persistence gap without changing its historical report or removing
+infrastructure/browser release gates.

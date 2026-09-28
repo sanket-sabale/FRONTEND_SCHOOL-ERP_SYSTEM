@@ -2,27 +2,41 @@
   "name": "school-erp",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "node --test tests/admissions-domain.test.mjs tests/admissions-service.test.mjs tests/admission-finance.test.mjs tests/enrollment-service.test.mjs tests/admission-communication.test.mjs tests/phase-11-architecture.test.mjs tests/finance-core.test.mjs tests/bff-session-contract.test.mjs"
+    "test": "node --test tests/admissions-domain.test.mjs tests/admissions-service.test.mjs tests/admission-finance.test.mjs tests/enrollment-service.test.mjs tests/admission-communication.test.mjs tests/phase-11-architecture.test.mjs tests/finance-core.test.mjs tests/bff-session-contract.test.mjs tests/bff-foundation.test.mjs tests/bff-http-foundation.test.mjs tests/bff-qualification.test.mjs tests/bff-pending-auth.test.mjs",
+    "test:bff": "node --test tests/bff-session-contract.test.mjs tests/bff-foundation.test.mjs tests/bff-http-foundation.test.mjs tests/bff-qualification.test.mjs tests/bff-pending-auth.test.mjs",
+    "test:bff:http": "node --test tests/bff-http-foundation.test.mjs",
+    "test:bff:postgres": "node --test tests/bff-postgres.test.mjs",
+    "test:bff:qualification": "node --test tests/bff-qualification.test.mjs",
+    "test:bff:multiprocess": "node --test tests/bff-multiprocess.test.mjs",
+    "test:bff:pending": "node --test tests/bff-pending-auth.test.mjs",
+    "test:bff:pending:postgres": "node --test tests/bff-pending-postgres.test.mjs"
   },
   "dependencies": {
+    "@google-cloud/kms": "^6.2.0",
     "@tiptap/extension-color": "^3.30.0",
     "@tiptap/extension-link": "^3.30.0",
     "@tiptap/extension-text-style": "^3.30.0",
     "@tiptap/extension-underline": "^3.30.0",
     "@tiptap/react": "^3.30.0",
     "@tiptap/starter-kit": "^3.30.0",
+    "google-auth-library": "11.1.0",
     "next": "16.3.0",
+    "pg": "^8.23.0",
     "react": "19.2.8",
     "react-dom": "19.2.8"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
+    "@types/pg": "^8.23.1",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "babel-plugin-react-compiler": "1.0.0",

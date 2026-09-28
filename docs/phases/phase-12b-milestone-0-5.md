@@ -97,3 +97,131 @@ Uncertain refresh/logout may leave backend credentials valid until expiry; local
 ## T. Recommended next milestone
 
 Resolve contract D1–D6 deployment bindings, then Milestone 1 HTTP Foundation. Pure transport/error work can proceed independently, but live cookie/authentication must not ship with guessed storage, lifetimes or topology.
+
+---
+
+## Follow-up — D1–D6 implementation, 2026-09-27
+
+**Status: D1–D6 PARTIAL.** The historical Milestone 0.5 results above are preserved.
+Approved D1–D6 values are frozen in the updated contract and the new
+[deployment decision document](../frontend/BFF-DEPLOYMENT-DECISIONS.md).
+Repository implementation and local database evidence do not establish live
+GCP/Spring readiness. No authentication route or cookie issuer was activated.
+
+### A. Exact changed files
+
+| File | Change |
+| --- | --- |
+| `src/instrumentation.ts` | Fail-closed production startup validation; safe config summary |
+| `src/server/bff/config.ts` | Typed environment/config limits and independent lifetime policy |
+| `src/server/bff/credential-envelope.ts` | AEAD credential pair, KMS wrapping and pinned key IDs |
+| `src/server/bff/errors.ts` | Safe Spring problem allowlist and BFF-owned errors |
+| `src/server/bff/postgres-session-store.ts` | Production pg adapter, strict persistence model, bounded transactions/CAS |
+| `src/server/bff/refresh-coordinator.ts` | Durable ownership/dispatch, bounded wait and no uncertain replay |
+| `src/server/bff/refresh-broker.ts` | One-send refresh, DTO/me identity checks and new encrypted pair |
+| `src/server/bff/spring-client.ts` | Fixed server-only HTTP transport, limits, safe headers/errors |
+| `src/server/bff/session-contract.ts` | Comment updated to describe adapter existence; types/invariants retained |
+| `deploy/bff/001-session-store.sql` | Dedicated schema and explicit persistence columns |
+| `deploy/bff/runtime.env.template` | Approved numerical values; empty required deployment resource inputs |
+| `deploy/bff/README.md` | Provisioning/verification checklist and isolated PostgreSQL test instructions |
+| `tests/bff-foundation.test.mjs` | Config, AEAD, broker, HTTP/error boundary tests |
+| `tests/bff-postgres.test.mjs` | Real PostgreSQL transaction/concurrency/failure tests |
+| `tests/helpers/bff-loader.mjs` | Node-only test loader and non-secret config fixtures |
+| `package.json` | pg/KMS dependencies, Node 22 requirement, focused test commands |
+| `package-lock.json` | Locked dependencies; existing package versions preserved |
+| `docs/frontend/BFF-SESSION-CONTRACT.md` | D1–D6 bindings replace open policy values; runtime gates retained |
+| `docs/frontend/BFF-DEPLOYMENT-DECISIONS.md` | Decisions, rationale, operational gates and full security review |
+| `docs/phases/phase-12b-milestone-0-5.md` | This appended follow-up only |
+
+### B. Decisions and evidence
+
+| Decision | Value | Status | Evidence |
+| --- | --- | --- | --- |
+| D1 | GCP asia-south1, LB/Armor, restricted Next/internal Spring, explicit schoolerp.com/staging/localhost targets | Contract bound; deployment unverified | Config and deployment checklist; current Google docs reviewed |
+| D2 | Cloud SQL PostgreSQL 17+ HA, dedicated schoolerp_bff boundary | Adapter implemented; local PostgreSQL verified | 16 integration cases plus parent test; provider HA not tested |
+| D3 | Platform 30m idle/12h absolute; Tenant 8h/30d; pre-auth 10m; selection 5m; lead/skew 60s | Implemented/tested | Typed config, lifetime helper, store expiry/fencing tests |
+| D4 | AES-256-GCM + KMS-wrapped data key, AAD and pinned version; Secret Manager | Code/crypto tests complete; live KMS unverified | Roundtrip, tamper, wrong-key/context/environment/version tests |
+| D5 | Cloud Armor preview policy proposals; existing Spring limits preserved | Contract bound; runtime unresolved | Source audit and header/429 tests; proxy/load tests pending |
+| D6 | Explicit limits in runtime.env.template | Implemented/tested | Startup rejection, HTTP limits, SQL transaction timeout and refresh coordination tests |
+
+### C. Architecture
+
+```text
+Browser → External HTTPS LB → Cloud Armor → Next.js BFF
+                                              ↓ private/VPC
+                                         Spring Boot → ERP PostgreSQL
+
+Next.js BFF → BFF Session Store (separate Cloud SQL PostgreSQL HA)
+                        ↓ logical encryption dependency
+                       KMS (BFF performs wrapping/unwrapping)
+```
+
+### D. Implemented security properties
+
+Preserved separate Platform/Tenant cookies, contexts and fixed namespaces, opaque
+hash-addressed sessions, HttpOnly/Secure/Strict production cookie primitives,
+exact-origin and CSRF primitives, and Spring's final authorization authority.
+Added encrypted credential persistence, row/generation/owner fencing, durable
+dispatch, atomic replacement/tombstones, SQL expiry checks, no refresh takeover or
+retry, fail-closed errors/configuration, bounded fixed-origin HTTP transport,
+fresh headers and safe response/error projection. No process-local session or
+refresh lock is authoritative. No route consumes credentials or emits cookies.
+
+The decision document records **control, test and remaining limitation** for each
+requested threat: leakage, CSRF/XSS, SSRF/proxying, forged headers, both forms of
+context confusion, refresh replay/race, logout race, cookie theft/tampering,
+store outage/rollback, key loss/rotation, caching/logs, rate limits and redirects.
+
+### E. Validation results
+
+| Exact command/check | Result |
+| --- | --- |
+| `npm test` | PASS — 61 tests, 1 suite; zero failures/skips |
+| `npm run test:bff` | PASS — 35 tests; zero failures/skips |
+| `npm run test:bff:postgres` with `BFF_TEST_DATABASE_URL=postgresql://postgres@127.0.0.1:55439/bff_contract_tests` | PASS — 17 tests (16 cases + parent), actual PostgreSQL 17; zero failures/skips |
+| `npx tsc --noEmit --incremental false` | PASS |
+| `npm run lint` | PASS — zero errors; existing isSameScope warning at school-erp-documentation/code/examples/tenant-scoped-query.ts:8 |
+| `npm run build` | PASS — Next 16.3.0, 95 existing source pages plus generated not-found, 68 static generation work items |
+| `git diff --check` | PASS |
+| `node node_modules/next/dist/bin/next start -p 3017` without BFF configuration | Expected rejection — exit 1; safe error, no configured BFF startup |
+| Source routes compared with `.next/server/app-paths-manifest.json` | 95/95 present; no BFF handlers |
+| Source UI imports and `.next/static` JS scan for server config/persistence and fixture-secret markers | No matches |
+| Backend git status | Unchanged, clean |
+| `npm audit --omit=dev --json` with network access | 31 existing production-tree advisories: 28 moderate, 2 high, 1 critical; release blocker |
+
+Windows sandbox subprocess failures required approved reruns for tests/build.
+Initial database timeout testing exposed pg checked-out connection error handling;
+the adapter now handles terminal errors without leaking driver details. Final
+PostgreSQL suite passed. Production startup testing exposed Next's retained
+listener after a rejected instrumentation promise; explicit failure exit was
+implemented and rechecked. The disposable PostgreSQL container is removed after
+validation. No ERP database was used.
+
+### F. Runtime evidence boundaries
+
+| Claim | Evidence level |
+| --- | --- |
+| Implemented in repository | Yes — files above |
+| Configured locally | Disposable PostgreSQL and local HTTP fixtures only; no retained production config |
+| Validated with tests | Yes — unit/HTTP fixtures and real single-node PostgreSQL transactions |
+| Validated against live GCP | No |
+| Validated against live Spring | No — source inspection and fixtures only |
+| Validated against real multi-instance deployment | No — separate pg pools/coordinator objects in one Node test process, not separate Cloud Run instances |
+| Browser E2E/cookie runtime behavior | Not run; auth routes intentionally absent |
+
+### G. Remaining blockers
+
+Actual GCP project/configuration, DNS and certificates; Cloud Run deployments and
+service-to-service IAM header integration; Cloud SQL HA/private TLS/grants; KMS
+and Secret Manager provisioning; LB/default-run.app/internal ingress checks;
+Cloud Armor preview/load tuning; Spring per-BFF rate-limit aggregation; clock and
+capacity monitoring; multi-instance failover/rollback/key-loss drills; browser
+E2E and live Spring integration; existing dependency advisories. The full
+deployment decision document distinguishes these from code already tested.
+
+### H. Next milestone
+
+**Milestone 1 — HTTP Foundation completion → Milestone 2 — Production Session
+Store Adapter → Milestone 3 — Platform Authentication.** Adapter code is now
+present; Milestone 2 must qualify real deployment durability and integration.
+Do not skip directly to UI authentication.

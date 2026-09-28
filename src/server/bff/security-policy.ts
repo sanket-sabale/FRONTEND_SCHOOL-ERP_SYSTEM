@@ -44,7 +44,7 @@ export function validateWebOrigin(origin: string, environment: CookieEnvironment
 
 export function rejectBrowserAuthority(headers: Headers) {
   for (const [name] of headers) {
-    if (["authorization", "proxy-authorization", "x-tenant-id", "x-internal-auth", "x-service-token"].includes(name)) throw new Error("Browser authority rejected");
+    if (["authorization", "proxy-authorization", "x-tenant-id", "x-membership-id", "x-platform-role", "x-permissions", "x-internal-auth", "x-service-token", "x-serverless-authorization"].includes(name)) throw new Error("Browser authority rejected");
   }
 }
 
@@ -60,15 +60,28 @@ export function verifyMutation(headers: Headers, trustedOrigin: string, supplied
 
 // This registry proves the auth boundary only. Business mappings must be individually
 // added from verified controllers; no generic URL/path forwarding is permitted.
-export type AuthOperation = "login" | "session" | "refresh" | "logout";
+export type AuthOperation = "login" | "session" | "refresh" | "logout" | "select-membership";
 export function authRoute(context: Context, operation: AuthOperation) {
-  if (!["PLATFORM", "TENANT"].includes(context) || !["login", "session", "refresh", "logout"].includes(operation)) throw new Error("Operation not allowed");
+  if (!["PLATFORM", "TENANT"].includes(context) || !["login", "session", "refresh", "logout", "select-membership"].includes(operation)) throw new Error("Operation not allowed");
+  if (operation === "select-membership" && context !== "TENANT") throw new Error("Operation not allowed");
   const prefix = context === "PLATFORM" ? "/api/platform/auth" : "/api/auth";
   return {
+    id: `${context}_AUTH_${operation.toUpperCase()}`,
     context,
     method: operation === "session" ? "GET" : "POST",
     upstreamPath: `${prefix}/${operation === "session" ? "me" : operation}`,
     browserPath: `/api/bff/${context.toLowerCase()}/${operation}`,
+    body: operation === "session" ? "none" as const : "json" as const,
+    userAuthentication: operation === "session" || operation === "logout",
+    serviceAuthentication: true,
+    successStatus: operation === "logout" ? 204 : 200,
+    responseType: operation === "logout" ? "empty" as const : "application/json" as const,
+    requestLimit: "AUTH_REQUEST_MAX_BYTES" as const,
+    responseLimit: "AUTH_RESPONSE_MAX_BYTES" as const,
+    connectTimeout: "BFF_UPSTREAM_CONNECT_TIMEOUT_MS" as const,
+    responseTimeout: "BFF_UPSTREAM_RESPONSE_TIMEOUT_MS" as const,
+    browserCsrfRequired: operation !== "session",
+    responsePolicy: operation === "session" ? "identity-projection" : "server-only",
   };
 }
 

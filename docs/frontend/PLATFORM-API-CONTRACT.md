@@ -6,6 +6,12 @@ Backend: `D:/SCHOOL ERP SYSTEM/BACKEND/schoolerp`, commit `4dc728280317680ce806e
 
 ## Common transport and errors
 
+Milestone 1 follow-up (2026-09-27): the fixed BFF transport validates the four
+existing auth operations without registering browser handlers. Spring's Platform
+and Tenant context cleanup filters generate a new request UUID rather than
+preserving incoming `X-Request-ID`. The BFF sends and returns its own generated ID;
+end-to-end log correlation is not established. Backend source remains unchanged.
+
 These are Spring Boot endpoints, not existing Next.js Route Handlers. Requests/responses use JSON, except successful 204 responses. UUIDs and instants are JSON strings; Java sets serialize as arrays. Amounts are Java `BigDecimal` (default JSON numeric serialization); no custom string serialization was established. Do not reuse the frontend INR-only money contract without an explicit decimal-safe adapter.
 
 All endpoints except login and refresh require `Authorization: Bearer <platform access token>`. No tenant ID/header or membership selection is needed. Public auth requests should omit stale Authorization headers. No platform controller sets authentication cookies. Browser persistence and any Next.js cookie/BFF contract are **not defined by this backend API**.

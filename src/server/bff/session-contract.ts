@@ -1,6 +1,6 @@
 import "server-only";
 
-// Contract primitives only. No routes, credential persistence, or store adapter exists yet.
+// Pure contract types. Persistence is implemented separately; no live routes exist.
 export type Context = "PLATFORM" | "TENANT";
 export type AuthenticationMethod = "PASSWORD" | "OIDC";
 
